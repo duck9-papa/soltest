@@ -46,16 +46,17 @@ function Main() {
   const [A_Page, setA_Page] = useState(0);
   const [B_Page, setB_Page] = useState(0);
 
-  const handleClickOutside = (e)=>{
-    if(!inputBodyRef.current.contains(e.target)){
-      setFocus(false)
+  // 영역 외 클릭 시 포커스 해제
+  const handleClickOutside = (e) => {
+    if (!inputBodyRef.current.contains(e.target)) {
+      setFocus(false);
     }
-  }
+  };
 
   useEffect(() => {
-    window.addEventListener("click", handleClickOutside);
+    window.addEventListener('click', handleClickOutside);
     return () => {
-      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener('click', handleClickOutside);
     };
   }, [inputBodyRef]);
 
