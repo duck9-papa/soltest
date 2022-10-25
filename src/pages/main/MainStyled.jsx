@@ -14,7 +14,7 @@ export const MainInputDiv = styled.div`
   transition: all 0.5s;
   display: flex;
   flex-direction: row;
-  border: 1px solid gray;
+  border: 1px solid ${(props) => props.borderColor};
   margin: 50px;
   &:hover {
     border-color: blue;
@@ -30,8 +30,6 @@ export const MainInput = styled.input`
   height: 21px;
   border: none;
   outline: none;
-  &:focus {
-  }
 `;
 
 export const TabArea = styled.div`
@@ -70,5 +68,5 @@ export const ContentArea = styled.div`
 `;
 
 export const ScrollDiv = styled.div`
-    height: 30px;
-`
+  height: 30px;
+`;

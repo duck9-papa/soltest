@@ -21,21 +21,45 @@ function Main() {
   // env
   const TOKEN = process.env.REACT_APP_TOKEN;
   const URL = process.env.REACT_APP_URL;
+  // input 영역 ref
+  const inputBodyRef = useRef();
+  // foucs 일때 테두리 색 변화
+  const [focus, setFocus] = useState(false);
+  // 스크롤 값
   const [y, setY] = useState(document.scrollingElement.scrollHeight);
+  // 클릭 값 ( 클릭 시 디테일로 전환 )
   const [click, setClick] = useState(false);
+  // 디테일 데이터 값
   const [detail, setDetail] = useState('');
+  // 무한스크롤 감지
   const [scrollRef, viewScroll] = useInView();
+  // 검색 창 ref
   const textInput = useRef();
+  // 카테고리 상태 값
   const [tab, setTab] = useState('a');
+  // 검색 배열 & 값
   const [search, setSearch] = useState('');
   const [search_Arr, setSearch_Arr] = useState([]);
+  // 카테고리 별 배열 값
   const [A_Arr, setA_Arr] = useState([]);
   const [B_Arr, setB_Arr] = useState([]);
   const [A_Page, setA_Page] = useState(0);
   const [B_Page, setB_Page] = useState(0);
 
-  // 스크롤 복원
+  const handleClickOutside = (e)=>{
+    if(!inputBodyRef.current.contains(e.target)){
+      setFocus(false)
+    }
+  }
 
+  useEffect(() => {
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, [inputBodyRef]);
+
+  // 스크롤 복원
   useEffect(() => {
     if (!click) {
       window.scrollTo(0, y);
@@ -46,12 +70,14 @@ function Main() {
   const OnInput = () => {
     textInput.current.focus();
   };
+
   //최하단 도달 시 페이지 증가
   useEffect(() => {
     if (viewScroll) {
       tab === 'a' ? setA_Page(A_Page + 1) : setB_Page(B_Page + 1);
     }
   }, [viewScroll]);
+
   //페이지 증가 시 통신
   useEffect(() => {
     axios
@@ -66,6 +92,7 @@ function Main() {
           : setB_Arr([...B_Arr, ...res.data])
       );
   }, [A_Page, B_Page]);
+
   // 검색 시 통신
   useEffect(() => {
     setTimeout(() => {
@@ -85,14 +112,18 @@ function Main() {
   ) : (
     <MainBody>
       {/* input */}
-      <MainInputDiv>
+      <MainInputDiv
+        borderColor={focus ? 'blue' : 'gray'}
+        onClick={() => setFocus(true)}
+        ref={inputBodyRef}
+      >
         <SearchIconDiv onClick={OnInput}>
           <Search color={'gray'} onClick={OnInput} />
         </SearchIconDiv>
         <MainInput
           ref={textInput}
           value={search}
-          id="textInput"
+          id="searchInput"
           onChange={(e) => setSearch(e.target.value)}
         />
       </MainInputDiv>
