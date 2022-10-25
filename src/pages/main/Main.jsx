@@ -1,5 +1,5 @@
 // react import
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import axios from 'axios';
 // styled import
@@ -16,13 +16,14 @@ import {
 // components import
 import Search from '../../Icon/Search';
 import Content from '../../components/content/Content';
-import { useLocation } from 'react-router-dom';
+import Detail from '../detail/Detail';
 function Main() {
   // env
   const TOKEN = process.env.REACT_APP_TOKEN;
   const URL = process.env.REACT_APP_URL;
-  // 저장값
-  const location = useLocation();
+  const [y, setY] = useState(document.scrollingElement.scrollHeight);
+  const [click, setClick] = useState(false);
+  const [detail, setDetail] = useState('');
   const [scrollRef, viewScroll] = useInView();
   const textInput = useRef();
   const [tab, setTab] = useState('a');
@@ -32,33 +33,19 @@ function Main() {
   const [B_Arr, setB_Arr] = useState([]);
   const [A_Page, setA_Page] = useState(0);
   const [B_Page, setB_Page] = useState(0);
-  const saveData = {
-    tab: tab,
-    search: search,
-    search_Arr: search_Arr,
-    A_Arr: A_Arr,
-    B_Arr: B_Arr,
-    A_Page: A_Page,
-    B_Page: B_Page,
-  };
+
+  // 스크롤 복원
+
+  useEffect(() => {
+    if (!click) {
+      window.scrollTo(0, y);
+    }
+  }, [click]);
 
   //클릭시 인풋에 포커스
   const OnInput = () => {
     textInput.current.focus();
   };
-  // 저장 값이 존재할 시 복구
-  useEffect(() => {
-    if (location.state) {
-      setTab(location.state.tab);
-      setA_Arr(location.state.A_Arr);
-      setA_Page(location.state.A_Page);
-      setB_Arr(location.state.B_Arr);
-      setB_Page(location.state.B_Page);
-      setSearch(location.state.search);
-      setSearch_Arr(location.state.search_Arr);
-    }
-  }, []);
-  console.log(saveData);
   //최하단 도달 시 페이지 증가
   useEffect(() => {
     if (viewScroll) {
@@ -88,7 +75,14 @@ function Main() {
     }, 150);
   }, [search]);
 
-  return (
+  return click ? (
+    <Detail
+      detail={detail}
+      setClick={setClick}
+      setDetail={setDetail}
+      setY={setY}
+    />
+  ) : (
     <MainBody>
       {/* input */}
       <MainInputDiv>
@@ -126,7 +120,9 @@ function Main() {
                 item={item}
                 key={item.title + item.id}
                 tab={tab}
-                saveData={saveData}
+                setClick={setClick}
+                setDetail={setDetail}
+                setY={setY}
               />
             ))
           : // 검색중이 아니고 a탭일때
@@ -136,7 +132,9 @@ function Main() {
                 item={item}
                 key={item.title + item.id}
                 tab={tab}
-                saveData={saveData}
+                setClick={setClick}
+                setDetail={setDetail}
+                setY={setY}
               />
             ))
           : // b탭일때
@@ -145,7 +143,9 @@ function Main() {
                 item={item}
                 key={item.title + item.id}
                 tab={tab}
-                saveData={saveData}
+                setClick={setClick}
+                setDetail={setDetail}
+                setY={setY}
               />
             ))}
         <ScrollDiv ref={scrollRef} />

@@ -10,14 +10,15 @@ import {
   ContentText,
 } from './ContentStyled';
 
-const Content = ({ item, tab, saveData }) => {
+const Content = ({ item, tab, setClick, setDetail, setY }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   return (
     <ContentBody
       onClick={() => {
-        navigate(`/detail/${item.id}&${tab}`, { state: { save: saveData } });
-        dispatch({ type: 'ContentSlice/save', payload: saveData });
+        setDetail(`${item.id}&${tab}`);
+        setClick(true);
+        setY(window.scrollY);
       }}
     >
       <TitleArea>
